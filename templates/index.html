@@ -1,19 +1,14 @@
+<!doctype html>
+<html>
 <head>
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-
+  <title>Medical Report Summarizer</title>
+</head>
 <body>
-    <div class="App">
-        <header class="App-header">
-            <img src="{{ url_for('static', filename='Octocat.png') }}" class="App-logo" alt="logo" />
-            <p>
-                GitHub Codespaces <span class="heart">♥️</span> Flask
-            </p>
-            <p class="small">
-                Edit <code>templates/index.html</code> and refresh to see your changes!
-            </p>
-        </header>
-    </div>
+  <h1>Upload Medical Lab Report (PDF/Image)</h1>
+  <form method="post" enctype="multipart/form-data">
+    <input type="file" name="report" required>
+    <br><br>
+    <button type="submit">Analyze</button>
+  </form>
 </body>
-
 </html>

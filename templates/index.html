@@ -2,13 +2,53 @@
 <html>
 <head>
   <title>Medical Report Summarizer</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Upload Medical Lab Report (PDF/Image)</h1>
-  <form method="post" enctype="multipart/form-data">
-    <input type="file" name="report" required>
-    <br><br>
-    <button type="submit">Analyze</button>
-  </form>
+  <div class="container">
+    <h1>Upload Medical Lab Report (PDF or Image)</h1>
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="report" required>
+      <br><br>
+      <button type="submit">Analyze</button>
+    </form>
+  </div>
+  <div id="loader" class="hidden">
+  <div class="loader-spinner"></div>
+  <p id="loader-text">🧬 Initializing AI stethoscope...</p>
+</div>
+
+<script>
+  const messages = [
+    "Initializing AI stethoscope...",
+    "Extracting test results like a med school intern...",
+    "Synthesizing diagnostics... caffeine helps.",
+    "Charting lab values like a robot resident...",
+    "Calibrating quantum scalpel...",
+    "Pretending to be House MD...",
+    "Summoning digital Dr. Strange...",
+    "Reading your report like Sherlock Holmes in scrubs..."
+  ];
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  document.querySelector("form").addEventListener("submit", () => {
+    document.getElementById("loader").classList.remove("hidden");
+    
+    const shuffled = shuffle([...messages]);
+    let index = 0;
+
+    setInterval(() => {
+      document.getElementById("loader-text").textContent = shuffled[index];
+      index = (index + 1) % shuffled.length;
+    }, 2000);
+  });
+</script>
+
 </body>
 </html>

@@ -1,7 +1,9 @@
+# utils/extract.py
+
 import re
 
 def extract_tests(text):
-    pattern = r"(Iron|Ferritin|Transferrin Saturation|UIBC|TIBC|Total Iron Binding Capacity)[\s:]*([0-9.]+)[^\d]+([a-zA-Z%µ/]+)[^\d]+([0-9.]+)\s*-\s*([0-9.]+)"
+    pattern = r"(Iron|Ferritin|Transferrin Saturation|UIBC|TIBC|Total Iron Binding Capacity|Neutrophils|CBC|MCH|WBC|MCHC| Vitamin B12| Vitamin)[\s:]*([0-9.]+)[^\d]+([a-zA-Z%µ/]+)[^\d]+([0-9.]+)\s*-\s*([0-9.]+)"
     matches = re.findall(pattern, text, re.IGNORECASE)
     results = []
     for match in matches:
@@ -20,7 +22,10 @@ def extract_tests(text):
             "value": value,
             "unit": unit,
             "ref_range": f"{low} - {high}",
+            "ref_low": low,
+            "ref_high": high,
             "status": status,
             "explanation": explanation
         })
     return results
+

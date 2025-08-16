@@ -1,97 +1,95 @@
 body {
-  font-family: sans-serif;
-  background: #f9f9f9;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f9f9fb;
+    padding: 30px;
+    color: #333;
 }
+
 .container {
-  max-width: 900px;
-  margin: auto;
-  padding: 30px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-h1, h2 {
-  color: #333;
-}
-button {
-  padding: 10px 15px;
-  border: none;
-  background: #007BFF;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-button:hover {
-  background: #0056b3;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-th {
-  background: #eee;
-}
-pre {
-  background: #f4f4f4;
-  padding: 10px;
-  border-radius: 6px;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.summary-box {
-  background: #f0f8ff;
-  border-left: 5px solid #007BFF;
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 6px;
+h1 {
+    text-align: center;
+    color: #005b96;
+    margin-bottom: 20px;
 }
 
-.summary-box p {
-  margin: 10px 0;
-  line-height: 1.6;
-  font-size: 15px;
+.upload-box {
+    display: block;
+    background: #e0ecff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 2px dashed #89a;
+    text-align: center;
+    cursor: pointer;
+    color: #444;
+    margin-bottom: 10px;
 }
 
-.summary-box li {
-  margin-left: 20px;
-  font-size: 15px;
-  list-style: disc;
+.upload-box input[type="file"] {
+    display: none;
 }
 
-.hidden {
-  display: none;
+.filename-preview {
+    font-size: 14px;
+    margin-top: -5px;
+    margin-bottom: 15px;
+    color: #666;
 }
 
-#loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(255, 255, 255, 0.95);
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  text-align: center;
-  padding-top: 20%;
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #005b96;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.loader-spinner {
-  margin: 0 auto 20px;
-  width: 50px;
-  height: 50px;
-  border: 6px solid #ccc;
-  border-top: 6px solid #007BFF;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.btn:hover {
+    background-color: #004578;
+}
+
+#loading-box {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #005b96;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loader-text {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.loader-text span {
+    font-weight: bold;
+    color: #005b96;
+}
+
+.loader-text .loading-step {
+    display: block;
+    margin-top: 5px;
 }

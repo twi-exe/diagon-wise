@@ -1,31 +1,27 @@
-from fpdf import FPDF
+from weasyprint import HTML
 import tempfile
+import os
 
-def generate_pdf(tests, summary):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    pdf.set_font(style='B')
-    pdf.cell(200, 10, "Medical Report Summary", ln=True, align="C")
-    pdf.set_font(style='')
-
-    pdf.ln(10)
-    pdf.set_font(size=11)
-    pdf.cell(200, 10, "Abnormality Table:", ln=True)
-    pdf.ln(5)
-
-    for t in tests:
-        pdf.multi_cell(0, 8,
-            f"{t['test']}: {t['value']} {t['unit']} (Ref: {t['ref_range']})\n"
-            f"Status: {t['status']} | Explanation: {t['explanation']}\n", border=1)
-
-    pdf.ln(10)
-    pdf.set_font(style='B')
-    pdf.cell(200, 10, "AI Summary:", ln=True)
-    pdf.set_font(style='')
-    pdf.multi_cell(0, 10, summary)
+def generate_pdf_from_html(html_content):
+    # Wrap the content in a full HTML document
+    full_html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {{ font-family: 'Arial', sans-serif; font-size: 12px; padding: 20px; }}
+            h3 {{ color: #1f4e79; }}
+            span[style*='color: red'] {{ color: red; font-weight: bold; }}
+            ul {{ margin-bottom: 20px; }}
+        </style>
+    </head>
+    <body>
+        {html_content}
+    </body>
+    </html>
+    """
 
     tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    pdf.output(tmp_file.name)
+    HTML(string=full_html).write_pdf(tmp_file.name)
     return tmp_file.name

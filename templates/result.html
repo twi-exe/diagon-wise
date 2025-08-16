@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
 <head>
+      <hr>
+    <button onclick="toggleParsedText()">📄 Toggle Raw Parsed Text</button>
+    <pre id="parsedText" style="display: none;">{{ original }}</pre>
   <title>Results</title>
   <link rel="stylesheet" href="/static/style.css">
   <script>
@@ -11,8 +14,9 @@
   </script>
 </head>
 <body>
+  
   <div class="container">
-    <h2>🧪 Abnormality Table</h2>
+    <h2>Abnormality Table</h2>
     <table>
       <tr><th>Test</th><th>Value</th><th>Ref Range</th><th>Status</th><th>Explanation</th></tr>
       {% for t in tests %}
@@ -26,22 +30,84 @@
       {% endfor %}
     </table>
 
-   <h2>🧠 AI-Generated Summary</h2>
+   <h2>AI-Generated Summary</h2>
       <div class="summary-box">
       {{ summary | safe }}
-    </div>
+    </div> 
+
+<h2>Lab Chart</h2>
+<canvas id="labChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const testsData = JSON.parse('{{ tests_json | tojson | safe }}');
+
+  const labels = testsData.map(item => item.test);
+  const values = testsData.map(item => item.value);
+  const minRange = testsData.map(item => item.ref_low);
+  const maxRange = testsData.map(item => item.ref_high);
+
+  if (labels.length > 0) {
+    const ctx = document.getElementById('labChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Your Value',
+            data: values,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          },
+          {
+            label: 'Min Ref',
+            data: minRange,
+            type: 'line',
+            borderColor: 'green',
+            fill: false,
+            tension: 0.4,
+          },
+          {
+            label: 'Max Ref',
+            data: maxRange,
+            type: 'line',
+            borderColor: 'red',
+            fill: false,
+            tension: 0.4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Measurement'
+            }
+          }
+        }
+      }
+    });
+  } else {
+    document.getElementById('labChart').parentElement.innerHTML = "<p>⚠️ No chartable tests found.</p>";
+  }
+</script>
 
 
 
     <form method="POST" action="/download">
       <input type="hidden" name="summary" value="{{ summary }}">
       <input type="hidden" name="tests" value="{{ tests|tojson }}">
-      <button type="submit">📥 Download PDF</button>
+      <button type="submit">Download PDF</button>
     </form>
 
-    <hr>
-    <button onclick="toggleParsedText()">📄 Toggle Raw Parsed Text</button>
-    <pre id="parsedText" style="display: none;">{{ original }}</pre>
+
   </div>
 </body>
 </html>

@@ -93,3 +93,254 @@ h1 {
     display: block;
     margin-top: 5px;
 }
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+table th {
+    background-color: #005b96;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status-specific styling */
+table td:nth-child(4) {
+    font-weight: bold;
+}
+
+table td:nth-child(4):contains("High") {
+    color: #dc3545;
+}
+
+table td:nth-child(4):contains("Low") {
+    color: #ffc107;
+}
+
+table td:nth-child(4):contains("Normal") {
+    color: #198754;
+}
+
+h2 {
+    color: #005b96;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.summary-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #005b96;
+    margin: 20px 0;
+}
+/* Add these styles to your existing CSS */
+
+.abnormality-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 3rem;
+}
+
+.abnormality-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.abnormality-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.abnormality-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+}
+
+.abnormality-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.abnormality-card.severity-low,
+.abnormality-card.severity-high {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff9c4, #ffffff);
+}
+
+.abnormality-card.severity-very-low,
+.abnormality-card.severity-very-high {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #ffeaea, #ffffff);
+}
+
+.abnormality-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.test-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.severity-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.severity-text.critical {
+    background: #dc3545;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.severity-text.warning {
+    background: #ffc107;
+    color: #856404;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.value-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.your-value, .reference-range {
+    text-align: center;
+}
+
+.label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.value.low, .value.very-low {
+    color: #dc3545;
+}
+
+.value.high, .value.very-high {
+    color: #dc3545;
+}
+
+.range {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.explanation {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.explanation h5 {
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.explanation p {
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.urgent-notice {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .abnormality-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .value-comparison {
+        grid-template-columns: 1fr;
+    }
+}

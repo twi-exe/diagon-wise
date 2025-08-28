@@ -1,113 +1,1038 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-      <hr>
-    <button onclick="toggleParsedText()">📄 Toggle Raw Parsed Text</button>
-    <pre id="parsedText" style="display: none;">{{ original }}</pre>
-  <title>Results</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <script>
-    function toggleParsedText() {
-      const section = document.getElementById('parsedText');
-      section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if ai_only %}AI Medical Analysis{% else %}Lab Results{% endif %} - Medical Report Analyzer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Your existing CSS styles here -->
+    <style>
+        /* All your existing CSS styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.total .stat-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-card.normal .stat-icon { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
+        .stat-card.warning .stat-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .stat-card.danger .stat-icon { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .chart-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .chart-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .chart-container.active {
+            display: block;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .table-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        th {
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-low, .status-high {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-very-low, .status-very-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .summary-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-content {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #667eea;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .summary-content h3 {
+            color: #667eea;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .summary-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .summary-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .no-results p {
+            color: #666;
+        }
+
+        .raw-data {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 2rem;
+        }
+
+        .raw-data pre {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            border: 1px solid #e9ecef;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success-badge {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
+        }
+
+        .success-badge i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        /* AI-Only Mode Styles */
+        .ai-only-mode {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Debug styles */
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .header-section h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  
-  <div class="container">
-    <h2>Abnormality Table</h2>
-    <table>
-      <tr><th>Test</th><th>Value</th><th>Ref Range</th><th>Status</th><th>Explanation</th></tr>
-      {% for t in tests %}
-      <tr>
-        <td>{{ t.test }}</td>
-        <td>{{ t.value }} {{ t.unit }}</td>
-        <td>{{ t.ref_range }}</td>
-        <td>{{ t.status }}</td>
-        <td>{{ t.explanation }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                Medical Report Analyzer
+            </div>
+            <div class="nav-actions">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    New Analysis
+                </a>
+            </div>
+        </div>
+    </nav>
 
-   <h2>AI-Generated Summary</h2>
-      <div class="summary-box">
-      {{ summary | safe }}
-    </div> 
+    <div class="container">
+        <div class="header-section">
+            <h1><i class="fas fa-chart-line"></i> Lab Test Results Analysis</h1>
+            <p>Comprehensive analysis of your medical test results</p>
+        </div>
 
-<h2>Lab Chart</h2>
-<canvas id="labChart"></canvas>
+        {% if tests and tests|length > 0 %}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const testsData = JSON.parse('{{ tests_json | tojson | safe }}');
+        <!-- Statistics Overview -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-icon">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <span class="stat-number">{{ tests|length }}</span>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-card normal">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <span class="stat-number">{{ tests|selectattr("status", "equalto", "Normal")|list|length }}</span>
+                <div class="stat-label">Normal Results</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <span class="stat-number">{{ (tests|selectattr("status", "equalto", "Low")|list|length) + (tests|selectattr("status", "equalto", "High")|list|length) }}</span>
+                <div class="stat-label">Abnormal Results</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <span class="stat-number">{{ (tests|selectattr("status", "equalto", "Very Low")|list|length) + (tests|selectattr("status", "equalto", "Very High")|list|length) }}</span>
+                <div class="stat-label">Critical Results</div>
+            </div>
+        </div>        <!-- AI Summary (ALWAYS SHOWN) -->
+        <div class="summary-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-robot"></i>
+                    AI-Generated Summary
+                </div>
+            </div>
+            <div class="summary-content">
+                {{ summary | safe }}
+            </div>
+        </div>
 
-  const labels = testsData.map(item => item.test);
-  const values = testsData.map(item => item.value);
-  const minRange = testsData.map(item => item.ref_low);
-  const maxRange = testsData.map(item => item.ref_high);
+        <div class="main-content">
+            <!-- Charts Section -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Visual Analysis
+                    </div>
+                    <div class="chart-tabs">
+                        <button class="tab-btn active" onclick="switchChart(event, 'overview')">
+                            <i class="fas fa-chart-bar"></i>
+                            Overview
+                        </button>
+                        <button class="tab-btn" onclick="switchChart(event, 'comparison')">
+                            <i class="fas fa-chart-line"></i>
+                            Comparison
+                        </button>
+                        <button class="tab-btn" onclick="switchChart(event, 'status')">
+                            <i class="fas fa-chart-pie"></i>
+                            Distribution
+                        </button>
+                        <button class="tab-btn" onclick="switchChart(event, 'reference')">
+                            <i class="fas fa-chart-area"></i>
+                            Ranges
+                        </button>
+                    </div>
+                </div>
 
-  if (labels.length > 0) {
-    const ctx = document.getElementById('labChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Your Value',
-            data: values,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-          },
-          {
-            label: 'Min Ref',
-            data: minRange,
-            type: 'line',
-            borderColor: 'green',
-            fill: false,
-            tension: 0.4,
-          },
-          {
-            label: 'Max Ref',
-            data: maxRange,
-            type: 'line',
-            borderColor: 'red',
-            fill: false,
-            tension: 0.4,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-              text: 'Measurement'
-            }
-          }
+                <div id="overview-chart" class="chart-container active">
+                    <h4>Test Values Overview</h4>
+                    <div class="chart-wrapper">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="comparison-chart" class="chart-container">
+                    <h4>Values vs Reference Ranges</h4>
+                    <div class="chart-wrapper">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="status-chart" class="chart-container">
+                    <h4>Status Distribution</h4>
+                    <div class="chart-grid">
+                        <div class="chart-wrapper">
+                            <canvas id="statusPieChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="statusBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reference-chart" class="chart-container">
+                    <h4>Position in Reference Ranges</h4>
+                    <div class="chart-wrapper">
+                        <canvas id="referenceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results Table -->
+            <div class="table-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-table"></i>
+                        Detailed Test Results
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-vial"></i> Test</th>
+                                <th><i class="fas fa-calculator"></i> Value</th>
+                                <th><i class="fas fa-ruler"></i> Reference Range</th>
+                                <th><i class="fas fa-traffic-light"></i> Status</th>
+                                <th><i class="fas fa-info-circle"></i> Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tests %}
+                            <tr>
+                                <td><strong>{{ t.test }}</strong></td>
+                                <td>{{ t.value }} {{ t.unit }}</td>
+                                <td>{{ t.ref_range }} {{ t.unit }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ t.status.lower().replace(' ', '-') }}">
+                                        {% if t.status == 'Normal' %}
+                                            <i class="fas fa-check"></i>
+                                        {% elif t.status in ['Low', 'High'] %}
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        {% else %}
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        {% endif %}
+                                        {{ t.status }}
+                                    </span>
+                                </td>
+                                <td>{{ t.explanation }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+        {% else %}
+        <div class="no-results">
+            <div class="no-results-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3>No Test Results Found</h3>
+            <p>We couldn't extract any valid medical test data from your document. Please ensure your file contains clear lab results with numerical values and reference ranges.</p>
+            <div class="action-buttons" style="justify-content: center; margin-top: 2rem;">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-upload"></i>
+                    Try Another File
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Debug Info -->
+        <div class="debug-info">
+            <strong>Debug Info:</strong><br>
+            Tests found: {{ tests|length }}<br>
+            Chart.js loaded: <span id="chartjsStatus">Checking...</span><br>
+            Tests data: {{ tests_json | safe }}
+        </div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <form method="POST" action="/download" style="display: inline;">
+                <input type="hidden" name="summary" value="{{ summary }}">
+                <input type="hidden" name="tests" value="{{ tests_json }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-download"></i>
+                    Download PDF Report
+                </button>
+            </form>
+            <button class="btn btn-secondary" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                Print Results
+            </button>
+            <button class="btn btn-secondary" onclick="toggleRawData()">
+                <i class="fas fa-code"></i>
+                View Raw Data
+            </button>
+        </div>
+
+        <!-- Raw Data Section -->
+        <div id="rawDataSection" class="raw-data" style="display: none;">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-file-code"></i>
+                    Raw Extracted Text
+                </div>
+            </div>
+            <pre>{{ original }}</pre>
+        </div>
+    </div>
+
+    <script>
+        // Check if Chart.js is loaded
+        document.getElementById('chartjsStatus').textContent = typeof Chart !== 'undefined' ? 'Yes' : 'No';
+        
+        // Global variables
+        let testsData = [];
+        const charts = {};
+
+        {% if tests and tests|length > 0 %}
+        // Initialize with test data
+        try {
+            testsData = {{ tests_json | safe }};
+            console.log('Raw tests data:', testsData);
+            console.log('Number of tests:', testsData ? testsData.length : 0);
+        } catch (e) {
+            console.error('Error parsing tests data:', e);
+            testsData = [];
         }
-      }
-    });
-  } else {
-    document.getElementById('labChart').parentElement.innerHTML = "<p>⚠️ No chartable tests found.</p>";
-  }
-</script>
 
+        // Wait for DOM and Chart.js to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded!');
+                return;
+            }
+            
+            if (!testsData || testsData.length === 0) {
+                console.error('No test data available');
+                return;
+            }
+            
+            console.log('Initializing charts with data:', testsData);
+            
+            setTimeout(() => {
+                try {
+                    createSimpleChart();
+                    createComparisonChart();
+                    createStatusCharts();
+                    createReferenceChart();
+                    console.log('All charts created successfully');
+                } catch (error) {
+                    console.error('Error creating charts:', error);
+                }
+            }, 100);
+        });
 
+        function switchChart(event, chartType) {
+            console.log('Switching to chart:', chartType);
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
 
-    <form method="POST" action="/download">
-      <input type="hidden" name="summary" value="{{ summary }}">
-      <input type="hidden" name="tests" value="{{ tests|tojson }}">
-      <button type="submit">Download PDF</button>
-    </form>
+            // Update chart containers
+            document.querySelectorAll('.chart-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            const targetChart = document.getElementById(chartType + '-chart');
+            if (targetChart) {
+                targetChart.classList.add('active');
+            } else {
+                console.error('Chart container not found:', chartType + '-chart');
+            }
+        }
 
+        function createSimpleChart() {
+            console.log('Creating simple overview chart...');
+            const canvas = document.getElementById('overviewChart');
+            
+            if (!canvas) {
+                console.error('Canvas not found: overviewChart');
+                return;
+            }
 
-  </div>
+            // Simple test data
+            const labels = testsData.map(item => item.test || 'Unknown Test');
+            const values = testsData.map(item => {
+                const val = parseFloat(item.value);
+                return isNaN(val) ? 0 : val;
+            });
+
+            console.log('Chart labels:', labels);
+            console.log('Chart values:', values);
+
+            // Create simple bar chart
+            charts.overview = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Test Values',
+                        data: values,
+                        backgroundColor: [
+                            '#36A2EB',
+                            '#FF6384',
+                            '#4BC0C0',
+                            '#FF9F40',
+                            '#9966FF',
+                            '#FFCD56'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Test Results Overview'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            console.log('Simple chart created successfully');
+        }
+
+        function createComparisonChart() {
+            console.log('Creating comparison chart...');
+            const canvas = document.getElementById('comparisonChart');
+            
+            if (!canvas) {
+                console.error('Canvas not found: comparisonChart');
+                return;
+            }
+
+            const labels = testsData.map(item => item.test || 'Unknown Test');
+            const values = testsData.map(item => parseFloat(item.value) || 0);
+            const lowValues = testsData.map(item => parseFloat(item.ref_low) || 0);
+            const highValues = testsData.map(item => parseFloat(item.ref_high) || 0);
+
+            charts.comparison = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Your Values',
+                            data: values,
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Reference Low',
+                            data: lowValues,
+                            borderColor: '#4BC0C0',
+                            borderDash: [5, 5],
+                            fill: false
+                        },
+                        {
+                            label: 'Reference High',
+                            data: highValues,
+                            borderColor: '#FF6384',
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Values vs Reference Ranges'
+                        }
+                    }
+                }
+            });
+            
+            console.log('Comparison chart created successfully');
+        }
+
+        function createStatusCharts() {
+            console.log('Creating status charts...');
+            
+            // Count statuses
+            const statusCounts = {};
+            testsData.forEach(test => {
+                const status = test.status || 'Unknown';
+                statusCounts[status] = (statusCounts[status] || 0) + 1;
+            });
+
+            // Pie chart
+            const pieCanvas = document.getElementById('statusPieChart');
+            if (pieCanvas) {
+                charts.statusPie = new Chart(pieCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            data: Object.values(statusCounts),
+                            backgroundColor: [
+                                '#4BC0C0',
+                                '#FF6384',
+                                '#FF9F40',
+                                '#FFCD56',
+                                '#36A2EB'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Status Distribution'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Bar chart
+            const barCanvas = document.getElementById('statusBarChart');
+            if (barCanvas) {
+                charts.statusBar = new Chart(barCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            label: 'Count',
+                            data: Object.values(statusCounts),
+                            backgroundColor: '#36A2EB'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Status Count'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            console.log('Status charts created successfully');
+        }
+
+        function createReferenceChart() {
+            console.log('Creating reference chart...');
+            const canvas = document.getElementById('referenceChart');
+            
+            if (!canvas) {
+                console.error('Canvas not found: referenceChart');
+                return;
+            }
+
+            const data = testsData.map((item, index) => {
+                const value = parseFloat(item.value) || 0;
+                const low = parseFloat(item.ref_low) || 0;
+                const high = parseFloat(item.ref_high) || 0;
+                const range = high - low;
+                const position = range > 0 ? ((value - low) / range) * 100 : 50;
+                
+                return {
+                    x: index,
+                    y: Math.max(0, Math.min(100, position))
+                };
+            });
+
+            charts.reference = new Chart(canvas, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Position in Range (%)',
+                        data: data,
+                        backgroundColor: '#FF6384'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Position in Reference Ranges'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Test Index'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Position (%)'
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            console.log('Reference chart created successfully');
+        }
+        {% endif %}
+
+        function toggleRawData() {
+            const section = document.getElementById('rawDataSection');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>

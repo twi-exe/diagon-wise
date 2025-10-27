@@ -18,7 +18,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* Use a solid blue background as requested */
+            background: #667eea;
             min-height: 100vh;
             color: #333;
         }
@@ -89,18 +90,16 @@
 
         .stat-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 2rem;
+            border-radius: 10px;
+            padding: 1.5rem;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: none; /* flatter */
+            transition: none;
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: none; /* no elevation on hover for flat UI */
         }
 
         .stat-icon {
@@ -115,10 +114,10 @@
             color: white;
         }
 
-        .stat-card.total .stat-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .stat-card.normal .stat-icon { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
-        .stat-card.warning .stat-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .stat-card.danger .stat-icon { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+    .stat-card.total .stat-icon { background: #667eea; border: 1px solid rgba(0,0,0,0.06); }
+    .stat-card.normal .stat-icon { background: #56ab2f; border: 1px solid rgba(0,0,0,0.06); }
+    .stat-card.warning .stat-icon { background: #f5576c; border: 1px solid rgba(0,0,0,0.06); }
+    .stat-card.danger .stat-icon { background: #ee5a24; border: 1px solid rgba(0,0,0,0.06); }
 
         .stat-number {
             font-size: 2.5rem;
@@ -249,7 +248,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #667eea; /* solid header color */
             color: white;
         }
 
@@ -355,14 +354,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #667eea; /* solid primary */
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: none;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            transform: none;
+            opacity: 0.95;
         }
 
         .btn-secondary {
@@ -423,13 +422,14 @@
         }
 
         .success-badge {
-            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            background: #56ab2f;
             color: white;
             padding: 1rem 2rem;
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);
+            box-shadow: none;
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
         .success-badge i {
@@ -452,6 +452,7 @@
             margin-bottom: 1rem;
             font-family: monospace;
             font-size: 0.8rem;
+            display: none; /* hidden by default; toggled via the Debug button */
         }
 
         @media (max-width: 768px) {
@@ -479,6 +480,40 @@
                 font-size: 2rem;
             }
         }
+
+        /* Print styles: hide header/navbar and non-essential UI when printing */
+        @media print {
+            /* hide global navigation and debug controls */
+            .navbar, .nav-actions, #debugToggle, .btn, .action-buttons, .chart-tabs, .chart-section, .no-results, .no-results-icon {
+                display: none !important;
+            }
+
+            /* hide footer-like raw data controls but show content */
+            .debug-info, .raw-data {
+                display: none !important;
+            }
+
+            /* Make the main container full width and remove borders/shadows */
+            .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+            }
+
+            /* Ensure tables and summary print cleanly */
+            table, thead, tbody, th, td {
+                color: #000 !important;
+                background: transparent !important;
+            }
+
+            /* Avoid page breaks inside table rows */
+            tr, td, th {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -493,6 +528,10 @@
                     <i class="fas fa-arrow-left"></i>
                     New Analysis
                 </a>
+                <button id="debugToggle" class="btn btn-secondary" type="button" title="Show / hide debug info">
+                    <i class="fas fa-bug"></i>
+                    Debug
+                </button>
             </div>
         </div>
     </nav>
@@ -1033,6 +1072,27 @@
             const section = document.getElementById('rawDataSection');
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
+
+        // Debug panel toggle: show/hide debug-info and persist preference in localStorage
+        (function() {
+            const dbgBtn = document.getElementById('debugToggle');
+            const dbgPanel = document.querySelector('.debug-info');
+            if (!dbgBtn || !dbgPanel) return;
+
+            // initialize from localStorage
+            const stored = localStorage.getItem('showDebug');
+            if (stored === '1') {
+                dbgPanel.style.display = 'block';
+            } else {
+                dbgPanel.style.display = 'none';
+            }
+
+            dbgBtn.addEventListener('click', () => {
+                const isShown = dbgPanel.style.display === 'block';
+                dbgPanel.style.display = isShown ? 'none' : 'block';
+                localStorage.setItem('showDebug', isShown ? '0' : '1');
+            });
+        })();
     </script>
 </body>
 </html>

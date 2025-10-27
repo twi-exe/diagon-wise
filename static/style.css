@@ -10,8 +10,9 @@ body {
     margin: auto;
     background: white;
     padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    box-shadow: none; /* flatter: remove shadow */
+    border: 1px solid #e6e6e6;
 }
 
 h1 {
@@ -56,7 +57,8 @@ h1 {
 }
 
 .btn:hover {
-    background-color: #004578;
+    /* Minimal hover effect for flat UI */
+    opacity: 0.95;
 }
 
 #loading-box {
@@ -100,9 +102,10 @@ table {
     border-collapse: collapse;
     margin: 20px 0;
     background: white;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: none; /* flatter: remove shadow */
+    border: 1px solid #e6e6e6;
 }
 
 table th {
@@ -152,29 +155,31 @@ h2 {
 .summary-box {
     background: #f8f9fa;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 6px;
     border-left: 4px solid #005b96;
     margin: 20px 0;
 }
 /* Add these styles to your existing CSS */
 
 .abnormality-section {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #ffffff;
+    /* remove blur and heavy shadows for flatter UI */
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: none;
+    border: 1px solid #e9eef6;
     margin-bottom: 3rem;
 }
 
 .abnormality-badge {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    /* Use a solid color instead of a gradient */
+    background: #ee5a24;
     color: white;
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 600;
+    border: 1px solid rgba(0,0,0,0.08);
 }
 
 .abnormality-grid {
@@ -186,28 +191,26 @@ h2 {
 
 .abnormality-card {
     background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: none; /* remove shadow for flat look */
     border-left: 4px solid;
-    transition: all 0.3s ease;
+    border: 1px solid #e6e6e6; /* keep subtle border */
 }
-
-.abnormality-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-}
+/* remove hover translate and elevated shadow to keep UI flat */
 
 .abnormality-card.severity-low,
 .abnormality-card.severity-high {
     border-left-color: #ffc107;
-    background: linear-gradient(135deg, #fff9c4, #ffffff);
+    /* Use a solid pale yellow background */
+    background: #fff9c4;
 }
 
 .abnormality-card.severity-very-low,
 .abnormality-card.severity-very-high {
     border-left-color: #dc3545;
-    background: linear-gradient(135deg, #ffeaea, #ffffff);
+    /* Use a solid pale red/pink background */
+    background: #ffeaea;
 }
 
 .abnormality-header {
@@ -263,7 +266,8 @@ h2 {
     margin-bottom: 1rem;
     background: #f8f9fa;
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: 8px;
+    border: 1px solid #e9eef6;
 }
 
 .your-value, .reference-range {
@@ -303,9 +307,10 @@ h2 {
 
 .explanation {
     background: #f8f9ff;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
+    border: 1px solid #e6eefc;
 }
 
 .explanation h5 {
@@ -325,14 +330,16 @@ h2 {
 }
 
 .urgent-notice {
-    background: linear-gradient(135deg, #dc3545, #c82333);
+    /* Solid urgent color with clear border */
+    background: #dc3545;
     color: white;
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    border: 1px solid #a71d24;
 }
 
 @media (max-width: 768px) {

@@ -11,14 +11,13 @@ RUN apt-get update \
        libpq-dev \
        libcairo2 \
        libpango-1.0-0 \
-    libpangoft2-1.0-0 \
-    libgdk-pixbuf-xlib-2.0-0 \
+       libpangoft2-1.0-0 \
+       libgdk-pixbuf-xlib-2.0-0 \
        libgobject-2.0-0 \
-         libxml2 \
-         libxslt1.1 \
-     && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
+       libxml2 \
+       libxslt1.1 \
+       tesseract-ocr \
+    && rm -rf /var/lib/apt/lists/*WORKDIR /app
 
 # Install runtime dependencies
 COPY requirements.txt ./

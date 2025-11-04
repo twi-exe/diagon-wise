@@ -9,103 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-    <script>
-        const loadingMessages = [
-            "Extracting blood, metaphorically…",
-            "Consulting AI stethoscope…",
-            "Drawing diagnostic conclusions…",
-            "Analyzing biomarkers…",
-            "Extracting lab metrics...",
-            "Calling the language model...",
-            "Analyzing hematology trends...",
-            "Parsing medical terminology...",
-            "Matching biomarkers to patterns...",
-            "Evaluating test boundaries...",
-            "Extracting DNA from PDFs...",
-            "Consulting Dr. GPT...",
-            "Diagnosing pixels...",
-            "Measuring Hemoglobin vibes...",
-            "Calibrating AI stethoscope...",
-            "Mixing LLM enzymes..." ,
-            "Talking to my inner doctor…",
-            "Decoding the red blood mysteries…",
-            "Running virtual bloodwork…",
-            "Calling LLM… Hope it's not on a break!"
-        ];
-
-        function showFileName(input) {
-            const fileLabel = document.getElementById("filename");
-            const uploadBox = document.querySelector('.upload-box');
-            if (input.files && input.files.length > 0) {
-                fileLabel.textContent = input.files[0].name;
-                uploadBox.classList.add('file-selected');
-                fileLabel.setAttribute('aria-live', 'polite');
-            } else {
-                fileLabel.textContent = "No file selected";
-                uploadBox.classList.remove('file-selected');
-            }
-        }
-
-        function startLoading() {
-            const loadingBox = document.getElementById("loading-box");
-            const msg = document.getElementById("loading-msg");
-            loadingBox.style.display = "block";
-            msg.textContent = loadingMessages[0];
-            // rotate messages periodically while visible
-            let idx = 0;
-            const rot = setInterval(() => {
-                if (loadingBox.style.display === 'none') {
-                    clearInterval(rot);
-                    return;
-                }
-                idx = (idx + 1) % loadingMessages.length;
-                msg.textContent = loadingMessages[idx];
-            }, 2500);
-        }
-
-        // Drag and drop functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadBox = document.querySelector('.upload-box');
-            const fileInput = document.getElementById('report');
-
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadBox.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadBox.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadBox.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight(e) {
-                uploadBox.classList.add('dragover');
-            }
-
-            function unhighlight(e) {
-                uploadBox.classList.remove('dragover');
-            }
-
-            uploadBox.addEventListener('drop', handleDrop, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                if (files && files.length) {
-                    // assign to input and update label
-                    fileInput.files = files;
-                    showFileName(fileInput);
-                }
-            }
-        });
-    </script>
+</head>
 </head>
 <body>
     <div class="container">
@@ -117,6 +21,9 @@
                     <p class="subtitle">AI-assisted medical report analysis</p>
                 </div>
             </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
         </header>
 
         <main>
@@ -177,5 +84,111 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        function updateThemeIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        // Existing drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBox = document.querySelector('.upload-box');
+            const fileInput = document.getElementById('report');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                uploadBox.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                uploadBox.classList.remove('dragover');
+            }
+
+            uploadBox.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length) {
+                    // assign to input and update label
+                    fileInput.files = files;
+                    showFileName(fileInput);
+                }
+            }
+        });
+
+        function showFileName(input) {
+            const fileLabel = document.getElementById("filename");
+            const uploadBox = document.querySelector('.upload-box');
+            if (input.files && input.files.length > 0) {
+                fileLabel.textContent = input.files[0].name;
+                uploadBox.classList.add('file-selected');
+                fileLabel.setAttribute('aria-live', 'polite');
+            } else {
+                fileLabel.textContent = "No file selected";
+                uploadBox.classList.remove('file-selected');
+            }
+        }
+
+        function startLoading() {
+            const loadingBox = document.getElementById("loading-box");
+            const msg = document.getElementById("loading-msg");
+            loadingBox.style.display = "block";
+            msg.textContent = loadingMessages[0];
+            // rotate messages periodically while visible
+            let idx = 0;
+            const rot = setInterval(() => {
+                if (loadingBox.style.display === 'none') {
+                    clearInterval(rot);
+                    return;
+                }
+                idx = (idx + 1) % loadingMessages.length;
+                msg.textContent = loadingMessages[idx];
+            }, 2500);
+        }
+
+        const loadingMessages = [
+            "Processing document…",
+            "Extracting text and measurements…",
+            "Analyzing results with AI…",
+            "Preparing your report…",
+            "Finalizing summary…"
+        ];
+    </script>
 </body>
 </html>

@@ -16,7 +16,27 @@
             --primary: #2f5dcc;
             --accent: #2aa9a3;
             --muted: #6b7280;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --border: rgba(15,23,42,0.06);
+            --border-hover: rgba(15,23,42,0.08);
+            --shadow: rgba(15,23,42,0.06);
             --radius: 14px;
+            --transition: all 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-start: #0f172a;
+            --bg-end: #1e293b;
+            --card-bg: #1e293b;
+            --primary: #60a5fa;
+            --accent: #34d399;
+            --muted: #94a3b8;
+            --text: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: rgba(248,250,252,0.1);
+            --border-hover: rgba(248,250,252,0.15);
+            --shadow: rgba(15,23,42,0.4);
         }
 
         * {
@@ -28,18 +48,19 @@
             background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
             min-height: 100vh;
             margin: 0;
-            color: #0f172a;
+            color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px var(--shadow);
+            border-bottom: 1px solid var(--border);
         }
 
         .navbar .container {
@@ -63,6 +84,26 @@
         .nav-actions {
             display: flex;
             gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: var(--border);
+            color: var(--text);
         }
 
         .container {
@@ -74,7 +115,7 @@
         .header-section {
             text-align: center;
             margin-bottom: 3rem;
-            color: #0f172a;
+            color: var(--text);
         }
 
         .header-section h1 {
@@ -125,7 +166,7 @@
     .stat-card.danger .stat-icon { background: #ee5a24; }        .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text);
             display: block;
             margin-bottom: 0.5rem;
         }
@@ -158,13 +199,13 @@
             justify-content: space-between;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--border);
         }
 
         .section-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #0f172a;
+            color: var(--text);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -172,7 +213,7 @@
 
         .chart-tabs {
             display: flex;
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 4px;
             gap: 4px;
@@ -214,7 +255,7 @@
             position: relative;
             height: 400px;
             margin: 1rem 0;
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 1rem;
         }
@@ -245,7 +286,8 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            background: white;
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         thead {
@@ -264,12 +306,13 @@
 
         td {
             padding: 1rem;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--border);
             font-size: 0.95rem;
+            color: var(--text);
         }
 
         tr:hover {
-            background: #f8f9ff;
+            background: var(--border);
         }
 
         .status-badge {
@@ -282,18 +325,21 @@
         }
 
         .status-normal {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(52, 211, 153, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(52, 211, 153, 0.2);
         }
 
         .status-low, .status-high {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .status-very-low, .status-very-high {
-            background: #f8d7da;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .summary-section {
@@ -305,12 +351,12 @@
         }
 
         .summary-content {
-            background: #f8f9ff;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 1.5rem;
             border-left: 4px solid var(--primary);
             line-height: 1.6;
-            color: #555;
+            color: var(--text);
         }
 
         .summary-content h3 {
@@ -361,13 +407,14 @@
         }
 
         .btn-secondary {
-            background: #f8f9fa;
+            background: var(--card-bg);
             color: var(--muted);
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: #e9ecef;
+            background: var(--bg-start);
+            border-color: var(--border-hover);
         }
 
         .no-results {
@@ -385,7 +432,7 @@
         }
 
         .no-results h3 {
-            color: #0f172a;
+            color: var(--text);
             margin-bottom: 1rem;
         }
 
@@ -403,12 +450,12 @@
         }
 
         .raw-data pre {
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 1rem;
             overflow-x: auto;
             font-size: 0.85rem;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--border);
             max-height: 400px;
             overflow-y: auto;
             white-space: pre-wrap;
@@ -438,8 +485,8 @@
 
         /* Debug styles */
         .debug-info {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1rem;
             margin-top: 1rem;
@@ -513,6 +560,9 @@
                 DiagonWise
             </div>
             <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <a href="/" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i>
                     New Analysis
@@ -749,6 +799,107 @@
         let testsData = [];
         const charts = {};
 
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+
+        function updateThemeIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function updateChartsForTheme(theme) {
+            const isDark = theme === 'dark';
+            
+            // Update overview chart
+            if (charts.overview) {
+                const chartColors = isDark ? [
+                    '#60a5fa', '#f87171', '#34d399', '#fbbf24', '#a78bfa', '#fcd34d'
+                ] : [
+                    '#36A2EB', '#FF6384', '#4BC0C0', '#FF9F40', '#9966FF', '#FFCD56'
+                ];
+                
+                charts.overview.data.datasets[0].backgroundColor = chartColors;
+                charts.overview.options.plugins.title.color = isDark ? '#f1f5f9' : '#0f172a';
+                charts.overview.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                charts.overview.options.scales.y.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.overview.options.scales.y.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.overview.options.scales.x.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.overview.options.scales.x.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.overview.update();
+            }
+            
+            // Update comparison chart
+            if (charts.comparison) {
+                charts.comparison.data.datasets[0].borderColor = isDark ? '#60a5fa' : '#36A2EB';
+                charts.comparison.data.datasets[0].backgroundColor = isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(54, 162, 235, 0.1)';
+                charts.comparison.data.datasets[1].borderColor = isDark ? '#34d399' : '#4BC0C0';
+                charts.comparison.data.datasets[2].borderColor = isDark ? '#f87171' : '#FF6384';
+                charts.comparison.options.plugins.title.color = isDark ? '#f1f5f9' : '#0f172a';
+                charts.comparison.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                charts.comparison.options.scales.y.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.comparison.options.scales.y.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.comparison.options.scales.x.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.comparison.options.scales.x.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.comparison.update();
+            }
+            
+            // Update status charts
+            if (charts.statusPie) {
+                const pieColors = isDark ? [
+                    '#34d399', '#f87171', '#fbbf24', '#fcd34d', '#60a5fa'
+                ] : [
+                    '#4BC0C0', '#FF6384', '#FF9F40', '#FFCD56', '#36A2EB'
+                ];
+                charts.statusPie.data.datasets[0].backgroundColor = pieColors;
+                charts.statusPie.options.plugins.title.color = isDark ? '#f1f5f9' : '#0f172a';
+                charts.statusPie.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                charts.statusPie.update();
+            }
+            
+            if (charts.statusBar) {
+                charts.statusBar.data.datasets[0].backgroundColor = isDark ? '#60a5fa' : '#36A2EB';
+                charts.statusBar.options.plugins.title.color = isDark ? '#f1f5f9' : '#0f172a';
+                charts.statusBar.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                charts.statusBar.options.scales.y.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.statusBar.options.scales.y.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.statusBar.options.scales.x.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.statusBar.options.scales.x.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.statusBar.update();
+            }
+            
+            // Update reference chart
+            if (charts.reference) {
+                charts.reference.data.datasets[0].backgroundColor = isDark ? '#f87171' : '#FF6384';
+                charts.reference.options.plugins.title.color = isDark ? '#f1f5f9' : '#0f172a';
+                charts.reference.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                charts.reference.options.scales.x.title.color = isDark ? '#cbd5e1' : '#475569';
+                charts.reference.options.scales.x.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.reference.options.scales.x.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.reference.options.scales.y.title.color = isDark ? '#cbd5e1' : '#475569';
+                charts.reference.options.scales.y.grid.color = isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)';
+                charts.reference.options.scales.y.ticks.color = isDark ? '#cbd5e1' : '#475569';
+                charts.reference.update();
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Update charts with new theme colors
+            updateChartsForTheme(newTheme);
+        });
+
         {% if tests and tests|length > 0 %}
         // Initialize with test data
         try {
@@ -818,6 +969,9 @@
                 return;
             }
 
+            // Check current theme
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
             // Simple test data
             const labels = testsData.map(item => item.test || 'Unknown Test');
             const values = testsData.map(item => {
@@ -828,6 +982,13 @@
             console.log('Chart labels:', labels);
             console.log('Chart values:', values);
 
+            // Theme-aware colors
+            const chartColors = isDark ? [
+                '#60a5fa', '#f87171', '#34d399', '#fbbf24', '#a78bfa', '#fcd34d'
+            ] : [
+                '#36A2EB', '#FF6384', '#4BC0C0', '#FF9F40', '#9966FF', '#FFCD56'
+            ];
+
             // Create simple bar chart
             charts.overview = new Chart(canvas, {
                 type: 'bar',
@@ -836,14 +997,7 @@
                     datasets: [{
                         label: 'Test Values',
                         data: values,
-                        backgroundColor: [
-                            '#36A2EB',
-                            '#FF6384',
-                            '#4BC0C0',
-                            '#FF9F40',
-                            '#9966FF',
-                            '#FFCD56'
-                        ]
+                        backgroundColor: chartColors
                     }]
                 },
                 options: {
@@ -852,12 +1006,32 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Test Results Overview'
+                            text: 'Test Results Overview',
+                            color: isDark ? '#f1f5f9' : '#0f172a'
+                        },
+                        legend: {
+                            labels: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
                         }
                     },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
                         }
                     }
                 }
@@ -875,6 +1049,8 @@
                 return;
             }
 
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
             const labels = testsData.map(item => item.test || 'Unknown Test');
             const values = testsData.map(item => parseFloat(item.value) || 0);
             const lowValues = testsData.map(item => parseFloat(item.ref_low) || 0);
@@ -888,21 +1064,21 @@
                         {
                             label: 'Your Values',
                             data: values,
-                            borderColor: '#36A2EB',
-                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderColor: isDark ? '#60a5fa' : '#36A2EB',
+                            backgroundColor: isDark ? 'rgba(96, 165, 250, 0.1)' : 'rgba(54, 162, 235, 0.1)',
                             tension: 0.1
                         },
                         {
                             label: 'Reference Low',
                             data: lowValues,
-                            borderColor: '#4BC0C0',
+                            borderColor: isDark ? '#34d399' : '#4BC0C0',
                             borderDash: [5, 5],
                             fill: false
                         },
                         {
                             label: 'Reference High',
                             data: highValues,
-                            borderColor: '#FF6384',
+                            borderColor: isDark ? '#f87171' : '#FF6384',
                             borderDash: [5, 5],
                             fill: false
                         }
@@ -914,7 +1090,31 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Values vs Reference Ranges'
+                            text: 'Values vs Reference Ranges',
+                            color: isDark ? '#f1f5f9' : '#0f172a'
+                        },
+                        legend: {
+                            labels: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
                         }
                     }
                 }
@@ -926,12 +1126,21 @@
         function createStatusCharts() {
             console.log('Creating status charts...');
             
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
             // Count statuses
             const statusCounts = {};
             testsData.forEach(test => {
                 const status = test.status || 'Unknown';
                 statusCounts[status] = (statusCounts[status] || 0) + 1;
             });
+
+            // Theme-aware colors
+            const pieColors = isDark ? [
+                '#34d399', '#f87171', '#fbbf24', '#fcd34d', '#60a5fa'
+            ] : [
+                '#4BC0C0', '#FF6384', '#FF9F40', '#FFCD56', '#36A2EB'
+            ];
 
             // Pie chart
             const pieCanvas = document.getElementById('statusPieChart');
@@ -942,13 +1151,7 @@
                         labels: Object.keys(statusCounts),
                         datasets: [{
                             data: Object.values(statusCounts),
-                            backgroundColor: [
-                                '#4BC0C0',
-                                '#FF6384',
-                                '#FF9F40',
-                                '#FFCD56',
-                                '#36A2EB'
-                            ]
+                            backgroundColor: pieColors
                         }]
                     },
                     options: {
@@ -957,7 +1160,13 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'Status Distribution'
+                                text: 'Status Distribution',
+                                color: isDark ? '#f1f5f9' : '#0f172a'
+                            },
+                            legend: {
+                                labels: {
+                                    color: isDark ? '#cbd5e1' : '#475569'
+                                }
                             }
                         }
                     }
@@ -974,7 +1183,7 @@
                         datasets: [{
                             label: 'Count',
                             data: Object.values(statusCounts),
-                            backgroundColor: '#36A2EB'
+                            backgroundColor: isDark ? '#60a5fa' : '#36A2EB'
                         }]
                     },
                     options: {
@@ -983,7 +1192,32 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'Status Count'
+                                text: 'Status Count',
+                                color: isDark ? '#f1f5f9' : '#0f172a'
+                            },
+                            legend: {
+                                labels: {
+                                    color: isDark ? '#cbd5e1' : '#475569'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                                },
+                                ticks: {
+                                    color: isDark ? '#cbd5e1' : '#475569'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                                },
+                                ticks: {
+                                    color: isDark ? '#cbd5e1' : '#475569'
+                                }
                             }
                         }
                     }
@@ -1002,6 +1236,8 @@
                 return;
             }
 
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
             const data = testsData.map((item, index) => {
                 const value = parseFloat(item.value) || 0;
                 const low = parseFloat(item.ref_low) || 0;
@@ -1021,7 +1257,7 @@
                     datasets: [{
                         label: 'Position in Range (%)',
                         data: data,
-                        backgroundColor: '#FF6384'
+                        backgroundColor: isDark ? '#f87171' : '#FF6384'
                     }]
                 },
                 options: {
@@ -1030,7 +1266,13 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Position in Reference Ranges'
+                            text: 'Position in Reference Ranges',
+                            color: isDark ? '#f1f5f9' : '#0f172a'
+                        },
+                        legend: {
+                            labels: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
                         }
                     },
                     scales: {
@@ -1038,16 +1280,30 @@
                             type: 'linear',
                             title: {
                                 display: true,
-                                text: 'Test Index'
+                                text: 'Test Index',
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            },
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
                             }
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'Position (%)'
+                                text: 'Position (%)',
+                                color: isDark ? '#cbd5e1' : '#475569'
                             },
                             min: 0,
-                            max: 100
+                            max: 100,
+                            grid: {
+                                color: isDark ? 'rgba(248, 250, 252, 0.1)' : 'rgba(15, 23, 42, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#cbd5e1' : '#475569'
+                            }
                         }
                     }
                 }

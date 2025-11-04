@@ -83,7 +83,7 @@ def upload_file():
     if request.method == 'POST':
         f = request.files.get('report')
         if not f:
-            return render_template('index.html', error="No file uploaded.")
+            return render_template('DiagonWise.html', error="No file uploaded.")
 
         try:
             filename = secure_filename(f.filename)
@@ -98,7 +98,7 @@ def upload_file():
 
             # Check if we have any text at all
             if not text or len(text.strip()) < 10:
-                return render_template('index.html', error="Could not extract readable text from the document. Please try a clearer image or PDF.")
+                return render_template('DiagonWise.html', error="Could not extract readable text from the document. Please try a clearer image or PDF.")
 
             # Try to extract structured test data
             tests = extract_tests(text)
@@ -145,9 +145,9 @@ def upload_file():
 
         except Exception as e:
             print(f"Error processing file: {str(e)}")
-            return render_template('index.html', error=f"Error processing file: {str(e)}")
+            return render_template('DiagonWise.html', error=f"Error processing file: {str(e)}")
 
-    return render_template('index.html')
+    return render_template('DiagonWise.html')
 
 
 @app.route('/download', methods=['POST'])

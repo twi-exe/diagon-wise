@@ -1,88 +1,152 @@
-# diagon-wise — Medical Report Analyzer
+# DiagonWise — AI-Powered Medical Report Analyzer
 
-diagon-wise is a Flask web application that extracts text and structured laboratory results
-from PDFs and images, then enriches those findings with AI-powered clinical summaries and
-explanations. It's designed for quick local development inside GitHub Codespaces and simple
-deployment workflows.
+DiagonWise is a modern web application that helps users understand their medical lab reports through AI-powered analysis. Upload your PDF or image lab reports, and get instant insights with clear explanations of test results, reference ranges, and clinical summaries.
 
-Key features
-- OCR for PDFs and images
-- Flexible extraction of lab test values and reference ranges
-- AI-powered clinical summaries and per-test explanations
-- Export results and AI summaries as a single PDF
+## 🌟 Features
 
-Repository layout
-- `app.py` — Flask application and routes
-- `utils/` — helpers: `ocr.py`, `extract.py`, `summarizer.py`, `pdf_export.py`
-- `templates/` and `static/` — front-end UI
-- `tests/` — unit tests (pytest)
-- `.env.example` — safe-to-commit example environment file
+- **Smart Document Processing**: Extracts text and structured data from PDFs and images using OCR
+- **AI-Powered Analysis**: Leverages advanced AI to provide clinical summaries and explain test results in plain language
+- **Visual Analytics**: Interactive charts showing test distributions, status breakdowns, and reference range comparisons
+- **Privacy-Focused**: Files are processed temporarily and can be removed after analysis
+- **Export Capabilities**: Download comprehensive PDF reports with AI summaries
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Secure & Local**: No data storage - analysis happens in your browser session
 
-Quickstart (local development)
---------------------------------
+## 🔬 How It Works
 
-Prerequisites
+1. **Upload**: Drag & drop or select your lab report (PDF or image format)
+2. **Extract**: Advanced OCR extracts text and identifies test values, units, and reference ranges
+3. **Analyze**: AI analyzes the data and generates clinical insights
+4. **Visualize**: Interactive charts and tables display results with status indicators
+5. **Export**: Download a professional PDF report for your records
+
+## 🚀 Quick Start
+
+### Prerequisites
 - Python 3.10+
-- pip
+- pip (Python package manager)
+- Git
 
-Install and run
+### Local Development with Python/Flask
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/twi-exe/diagon-wise.git
+   cd diagon-wise
+   ```
+
+2. **Set up virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your OPENROUTER_API_KEY
+   ```
+
+5. **Run the development server**
+   ```bash
+   flask --debug run
+   # Visit http://127.0.0.1:5000/ in your browser
+   ```
+
+### Production Deployment with Gunicorn
+
+For production deployment, use Gunicorn as the WSGI server:
+
+1. **Install Gunicorn**
+   ```bash
+   pip install gunicorn
+   ```
+
+2. **Run with Gunicorn**
+   ```bash
+   gunicorn --bind 0.0.0.0:8000 app:app
+   # Access at http://localhost:8000
+   ```
+
+3. **Advanced Gunicorn configuration**
+   ```bash
+   gunicorn --workers 4 --bind 0.0.0.0:8000 --timeout 120 app:app
+   ```
+
+### Docker Deployment
+
+Build and run with Docker:
+
+1. **Build the Docker image**
+   ```bash
+   docker build -t diagon-wise .
+   ```
+
+2. **Run the container**
+   ```bash
+   docker run -p 5000:5000 --env-file .env diagon-wise
+   # Access at http://localhost:5000
+   ```
+
+3. **Docker Compose (alternative)**
+   ```yaml
+   # docker-compose.yml
+   version: '3.8'
+   services:
+     diagon-wise:
+       build: .
+       ports:
+         - "5000:5000"
+       env_file:
+         - .env
+   ```
+
+   ```bash
+   docker-compose up
+   ```
+
+## 🌐 Online Access
+
+DiagonWise is deployed and accessible online at: **https://diagon-wise.onrender.com/**
+
+The live deployment uses Render's free tier and may have cold start delays. For consistent performance, consider running locally or deploying to your preferred platform.
+
+## 🔧 Environment Variables
+
+The application requires an AI API key for analysis features:
+
+- `OPENROUTER_API_KEY` — API key for OpenRouter-compatible AI service (required for AI summaries)
+
+### Setting Environment Variables
+
+**Local development:**
+```bash
+export OPENROUTER_API_KEY="your-api-key-here"
+```
+
+**Codespaces (recommended):**
+1. Go to repository Settings → Secrets and variables → Codespaces
+2. Add `OPENROUTER_API_KEY` as a repository secret
+3. Restart your Codespace
+
+**GitHub Actions:**
+1. Repository Settings → Secrets and variables → Actions
+2. Add `OPENROUTER_API_KEY` as a repository secret
+
+## 🏥 Health Check
+
+The app provides a `/health` endpoint to verify AI service connectivity:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# Run the development server
-flask --debug run
-# Visit http://127.0.0.1:5000/ in your browser
+curl https://diagon-wise.onrender.com/health
 ```
 
-Environment variables
----------------------
-The application requires an AI API key. Do not commit real keys to the repository.
-
-- `OPENROUTER_API_KEY` — API key for the OpenRouter-compatible AI service used by the
-  summarizer and explanation flows.
-
-Local testing (temporary)
--------------------------
-For temporary testing you may export an env var in your shell session (do not commit):
-
-```bash
-export OPENROUTER_API_KEY="sk-..."
-flask --debug run
-```
-
-Codespaces (recommended)
-------------------------
-To securely inject the key into Codespaces (preferred for developer convenience):
-
-1. On GitHub, open your repository → Settings → Secrets and variables → Codespaces.
-2. Choose "New repository secret" and add the name `OPENROUTER_API_KEY` with the key value.
-3. Restart your Codespace so the secret is injected into the container environment.
-
-GitHub Actions (CI)
---------------------
-If workflows require the key, add it to Actions secrets:
-
-1. Repo → Settings → Secrets and variables → Actions → New repository secret.
-2. Name it `OPENROUTER_API_KEY` and paste the key.
-
-In workflows you can access it as:
-
-```yaml
-env:
-  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-```
-
-Health check and diagnostics
-----------------------------
-The app provides a minimal `/health` endpoint to verify AI authentication and readiness.
-It returns a masked suffix of the configured API key so you can confirm the running process
-has the expected secret without exposing it.
-
-Example response:
-
+Response:
 ```json
 {
   "status": "ok",
@@ -91,30 +155,59 @@ Example response:
 }
 ```
 
-Testing
--------
-Run unit tests with pytest:
+## 🧪 Testing
+
+Run the test suite with pytest:
 
 ```bash
 pytest -q
 ```
 
-Troubleshooting
----------------
-- 401 Unauthorized from AI service: ensure `OPENROUTER_API_KEY` is set in the running process and has not been revoked. Restart the process after updating Codespaces secrets.
-- No text extracted: try a higher-quality image/PDF or verify OCR dependencies are installed.
+## 🔒 Security & Privacy
 
-Security checklist
-------------------
-- Rotate API keys immediately if they are exposed.
-- Never commit `.env` files with real secrets. Keep `.env` in `.gitignore` and use `.env.example` for documentation.
-- Prefer repository Codespaces secrets and Actions secrets for CI rather than local files.
+- **No Data Storage**: Files are processed in memory and not stored permanently
+- **Client-Side Processing**: Analysis happens on the server during your session
+- **API Key Protection**: Keys are masked in logs and health checks
+- **Secure Practices**: Follow security checklist for key management
 
-Contributing
-------------
-Contributions are welcome. Open an issue or a pull request. When adding features that require
-new environment variables, update `.env.example` and `README.md` accordingly.
+## 🛠️ Repository Structure
 
-License
--------
+```
+diagon-wise/
+├── app.py                 # Flask application and routes
+├── requirements.txt       # Python dependencies
+├── Dockerfile            # Docker configuration
+├── pytest.ini           # Test configuration
+├── utils/               # Helper modules
+│   ├── ocr.py          # OCR text extraction
+│   ├── extract.py      # Test data extraction
+│   ├── summarizer.py   # AI analysis
+│   └── pdf_export.py   # PDF generation
+├── templates/          # Jinja2 templates
+│   ├── DiagonWise.html # Main upload page
+│   └── result.html     # Results display page
+├── static/             # Static assets
+│   └── style.css      # Stylesheet
+├── tests/              # Unit tests
+└── uploads/           # Temporary file storage
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+When adding new features that require environment variables, update `.env.example` and this README.
+
+## 📄 License
+
 This project is licensed under the MIT License. See `LICENSE` for details.
+
+## ⚠️ Disclaimer
+
+DiagonWise is for informational purposes only and should not replace professional medical advice. Always consult with qualified healthcare providers for medical decisions and interpretation of lab results.

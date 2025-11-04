@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiagonWise — Medical Report Analyzer</title>
+    <meta name="description" content="Upload lab reports and get a concise, AI-assisted analysis of your medical results.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <script>
+        const loadingMessages = [
+            "Extracting blood, metaphorically…",
+            "Consulting AI stethoscope…",
+            "Drawing diagnostic conclusions…",
+            "Analyzing biomarkers…",
+            "Extracting lab metrics...",
+            "Calling the language model...",
+            "Analyzing hematology trends...",
+            "Parsing medical terminology...",
+            "Matching biomarkers to patterns...",
+            "Evaluating test boundaries...",
+            "Extracting DNA from PDFs...",
+            "Consulting Dr. GPT...",
+            "Diagnosing pixels...",
+            "Measuring Hemoglobin vibes...",
+            "Calibrating AI stethoscope...",
+            "Mixing LLM enzymes..." ,
+            "Talking to my inner doctor…",
+            "Decoding the red blood mysteries…",
+            "Running virtual bloodwork…",
+            "Calling LLM… Hope it's not on a break!"
+        ];
+
+        function showFileName(input) {
+            const fileLabel = document.getElementById("filename");
+            const uploadBox = document.querySelector('.upload-box');
+            if (input.files && input.files.length > 0) {
+                fileLabel.textContent = input.files[0].name;
+                uploadBox.classList.add('file-selected');
+                fileLabel.setAttribute('aria-live', 'polite');
+            } else {
+                fileLabel.textContent = "No file selected";
+                uploadBox.classList.remove('file-selected');
+            }
+        }
+
+        function startLoading() {
+            const loadingBox = document.getElementById("loading-box");
+            const msg = document.getElementById("loading-msg");
+            loadingBox.style.display = "block";
+            msg.textContent = loadingMessages[0];
+            // rotate messages periodically while visible
+            let idx = 0;
+            const rot = setInterval(() => {
+                if (loadingBox.style.display === 'none') {
+                    clearInterval(rot);
+                    return;
+                }
+                idx = (idx + 1) % loadingMessages.length;
+                msg.textContent = loadingMessages[idx];
+            }, 2500);
+        }
+
+        // Drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBox = document.querySelector('.upload-box');
+            const fileInput = document.getElementById('report');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                uploadBox.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                uploadBox.classList.remove('dragover');
+            }
+
+            uploadBox.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length) {
+                    // assign to input and update label
+                    fileInput.files = files;
+                    showFileName(fileInput);
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-stethoscope" aria-hidden="true"></i>
+                <div>
+                    <h1>DiagonWise</h1>
+                    <p class="subtitle">AI-assisted medical report analysis</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Upload a lab report or medical document</h2>
+                    <p class="muted">We extract key test results and provide a clear, concise summary to help you understand the data. For medical advice, consult a clinician.</p>
+                </div>
+            </section>
+
+            <form method="POST" enctype="multipart/form-data" onsubmit="startLoading()" aria-label="Upload medical report">
+                <label for="report" class="upload-box" tabindex="0">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon" aria-hidden="true"></i>
+                        <div class="upload-text">
+                            <strong>Click to select a file</strong>
+                            <div class="upload-subtext">or drag and drop a PDF or image (JPG, PNG)</div>
+                        </div>
+                    </div>
+                    <input type="file" name="report" id="report" accept=".pdf,.jpg,.jpeg,.png" required onchange="showFileName(this)" aria-required="true">
+                </label>
+
+                <div id="filename" class="filename-preview" aria-live="polite">No file selected</div>
+
+                <button type="submit" class="btn" aria-label="Analyze document">
+                    <i class="fas fa-robot" aria-hidden="true"></i>
+                    Analyze document
+                </button>
+            </form>
+
+            <div id="loading-box" class="loading-box" style="display:none;" role="status" aria-live="polite">
+                <div class="loader" aria-hidden="true"></div>
+                <p id="loading-msg">Processing document…</p>
+            </div>
+
+            <div class="features" aria-hidden="false">
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>Insightful Summary</h3>
+                    <p>AI highlights important findings and explains results in plain language.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-lock"></i>
+                    <h3>Privacy-focused</h3>
+                    <p>Files are processed on the server only for the duration of analysis and can be removed afterward.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-file-download"></i>
+                    <h3>Exportable</h3>
+                    <p>Download a neat PDF summary for your records or to share with a clinician.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <small>DiagonWise — For informational use only. Not a substitute for professional medical advice.</small>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

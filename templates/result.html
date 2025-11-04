@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if ai_only %}AI Medical Analysis{% else %}Lab Results{% endif %} - Medical Report Analyzer</title>
+    <title>{% if ai_only %}AI Medical Analysis{% else %}Lab Results{% endif %} - DiagonWise</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Your existing CSS styles here -->
     <style>
-        /* All your existing CSS styles */
+        :root {
+            --bg-start: #f6f8fb;
+            --bg-end: #eef2fb;
+            --card-bg: #ffffff;
+            --primary: #2f5dcc;
+            --accent: #2aa9a3;
+            --muted: #6b7280;
+            --radius: 14px;
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            /* Use a solid blue background as requested */
-            background: #667eea;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
             min-height: 100vh;
-            color: #333;
+            margin: 0;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
         }
 
         .navbar {
@@ -46,7 +54,7 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -66,7 +74,7 @@
         .header-section {
             text-align: center;
             margin-bottom: 3rem;
-            color: white;
+            color: #0f172a;
         }
 
         .header-section h1 {
@@ -78,10 +86,8 @@
 
         .header-section p {
             font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .stats-grid {
+            color: var(--muted);
+        }        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
@@ -89,17 +95,16 @@
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 1.5rem;
             text-align: center;
-            box-shadow: none; /* flatter */
-            transition: none;
-            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.03);
         }
 
         .stat-card:hover {
-            transform: none; /* no elevation on hover for flat UI */
+            transform: translateY(-2px);
         }
 
         .stat-icon {
@@ -114,21 +119,19 @@
             color: white;
         }
 
-    .stat-card.total .stat-icon { background: #667eea; border: 1px solid rgba(0,0,0,0.06); }
-    .stat-card.normal .stat-icon { background: #56ab2f; border: 1px solid rgba(0,0,0,0.06); }
-    .stat-card.warning .stat-icon { background: #f5576c; border: 1px solid rgba(0,0,0,0.06); }
-    .stat-card.danger .stat-icon { background: #ee5a24; border: 1px solid rgba(0,0,0,0.06); }
-
-        .stat-number {
+    .stat-card.total .stat-icon { background: var(--primary); }
+    .stat-card.normal .stat-icon { background: #56ab2f; }
+    .stat-card.warning .stat-icon { background: #f5576c; }
+    .stat-card.danger .stat-icon { background: #ee5a24; }        .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #333;
+            color: #0f172a;
             display: block;
             margin-bottom: 0.5rem;
         }
 
         .stat-label {
-            color: #666;
+            color: var(--muted);
             font-weight: 500;
             text-transform: uppercase;
             font-size: 0.85rem;
@@ -142,9 +145,8 @@
         }
 
         .chart-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -162,7 +164,7 @@
         .section-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #333;
+            color: #0f172a;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -182,21 +184,21 @@
             padding: 12px 20px;
             border-radius: 8px;
             font-weight: 500;
-            color: #666;
+            color: var(--muted);
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
         }
 
         .tab-btn:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
+            background: rgba(47, 93, 204, 0.1);
+            color: var(--primary);
         }
 
         .tab-btn.active {
-            background: #667eea;
+            background: var(--primary);
             color: white;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 2px 8px rgba(47, 93, 204, 0.3);
         }
 
         .chart-container {
@@ -225,9 +227,8 @@
         }
 
         .table-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -248,7 +249,7 @@
         }
 
         thead {
-            background: #667eea; /* solid header color */
+            background: var(--primary);
             color: white;
         }
 
@@ -296,9 +297,8 @@
         }
 
         .summary-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -308,13 +308,13 @@
             background: #f8f9ff;
             border-radius: 12px;
             padding: 1.5rem;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--primary);
             line-height: 1.6;
             color: #555;
         }
 
         .summary-content h3 {
-            color: #667eea;
+            color: var(--primary);
             margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
@@ -351,57 +351,51 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: #667eea; /* solid primary */
+            background: var(--primary);
             color: white;
-            box-shadow: none;
         }
 
-        .btn-primary:hover {
-            transform: none;
-            opacity: 0.95;
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.03);
         }
 
         .btn-secondary {
             background: #f8f9fa;
-            color: #666;
+            color: var(--muted);
             border: 2px solid #e9ecef;
         }
 
         .btn-secondary:hover {
             background: #e9ecef;
-            transform: translateY(-2px);
         }
 
         .no-results {
             text-align: center;
             padding: 4rem 2rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .no-results-icon {
             font-size: 4rem;
-            color: #667eea;
+            color: var(--primary);
             margin-bottom: 1rem;
         }
 
         .no-results h3 {
-            color: #333;
+            color: #0f172a;
             margin-bottom: 1rem;
         }
 
         .no-results p {
-            color: #666;
+            color: var(--muted);
         }
 
         .raw-data {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -428,8 +422,7 @@
             border-radius: 10px;
             text-align: center;
             margin-bottom: 2rem;
-            box-shadow: none;
-            border: 1px solid rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(86, 171, 47, 0.3);
         }
 
         .success-badge i {
@@ -448,34 +441,35 @@
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 8px;
-            padding: 1rem;margin-top: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
             margin-bottom: 1rem;
             font-family: monospace;
             font-size: 0.8rem;
-            display: none; /* hidden by default; toggled via the Debug button */
+            display: none;
         }
 
         @media (max-width: 768px) {
             .container {
                 padding: 0 1rem;
             }
-            
+
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .chart-tabs {
                 flex-wrap: wrap;
             }
-            
+
             .chart-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .header-section h1 {
                 font-size: 2rem;
             }
@@ -483,17 +477,14 @@
 
         /* Print styles: hide header/navbar and non-essential UI when printing */
         @media print {
-            /* hide global navigation and debug controls */
             .navbar, .nav-actions, #debugToggle, .btn, .action-buttons, .chart-tabs, .chart-section, .no-results, .no-results-icon {
                 display: none !important;
             }
 
-            /* hide footer-like raw data controls but show content */
-            .debug-info, .raw-data {
+            .raw-data {
                 display: none !important;
             }
 
-            /* Make the main container full width and remove borders/shadows */
             .container {
                 max-width: 100% !important;
                 margin: 0 !important;
@@ -503,13 +494,11 @@
                 background: transparent !important;
             }
 
-            /* Ensure tables and summary print cleanly */
             table, thead, tbody, th, td {
                 color: #000 !important;
                 background: transparent !important;
             }
 
-            /* Avoid page breaks inside table rows */
             tr, td, th {
                 page-break-inside: avoid;
             }
@@ -520,11 +509,11 @@
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                Medical Report Analyzer
+                <i class="fas fa-stethoscope"></i>
+                DiagonWise
             </div>
             <div class="nav-actions">
-                <a href="/" class="btn btn-secondary">
+                <a href="/" class="btn btn-primary">
                     <i class="fas fa-arrow-left"></i>
                     New Analysis
                 </a>

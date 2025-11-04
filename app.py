@@ -1,7 +1,8 @@
 # app.py (Updated to always generate AI results)
 import os
 import json
-from flask import Flask, render_template, request, send_file
+import requests
+from flask import Flask, render_template, request, send_file, jsonify
 from dotenv import load_dotenv
 from utils.ocr import extract_text_from_pdf, extract_text_from_image
 from utils.extract import extract_tests
@@ -14,6 +15,68 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# AI service health status (set on first request)
+app.config['AI_SERVICE_OK'] = None
+
+
+def _mask_key(val: str) -> str:
+    if not val:
+        return None
+    return f"****{val[-4:]}"
+
+
+def check_ai_service():
+    """Lightweight check to verify OpenRouter auth without leaking tokens.
+
+    This will perform a minimal POST with a small max_tokens and set
+    app.config['AI_SERVICE_OK'] = True/False depending on the status.
+    """
+    api_key = os.getenv('OPENROUTER_API_KEY')
+    if not api_key:
+        app.logger.warning("OPENROUTER_API_KEY not set in environment")
+        app.config['AI_SERVICE_OK'] = False
+        return False
+
+    try:
+        resp = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "mistralai/mixtral-8x7b-instruct",
+                "messages": [{"role": "user", "content": "auth check"}],
+                "max_tokens": 1
+            },
+            timeout=5
+        )
+        if resp.status_code == 200:
+            app.logger.info("AI auth check succeeded")
+            app.config['AI_SERVICE_OK'] = True
+            return True
+        else:
+            app.logger.warning(f"AI auth check failed: {resp.status_code} {resp.text}")
+            app.config['AI_SERVICE_OK'] = False
+            return False
+
+    except Exception as e:
+        app.logger.warning(f"AI auth check error: {e}")
+        app.config['AI_SERVICE_OK'] = False
+        return False
+
+
+@app.route('/health', methods=['GET'])
+def health():
+    # Ensure we run the check at least once
+    if app.config.get('AI_SERVICE_OK') is None:
+        check_ai_service()
+    return jsonify({
+        'status': 'ok',
+        'ai_service_ok': bool(app.config.get('AI_SERVICE_OK')),
+        'api_key_masked': _mask_key(os.getenv('OPENROUTER_API_KEY'))
+    })
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():

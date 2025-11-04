@@ -163,6 +163,36 @@ Run the test suite with pytest:
 pytest -q
 ```
 
+### Docker Testing
+
+To test the Docker build and deployment:
+
+1. **Build the image**
+   ```bash
+   docker build -t diagon-wise:local .
+   ```
+
+2. **Run the container**
+   ```bash
+   docker run --rm -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" -p 5000:5000 diagon-wise:local
+   ```
+
+3. **Test health endpoint** (in another terminal)
+   ```bash
+   curl -sS http://127.0.0.1:5000/health | jq .
+   ```
+
+   Expected response:
+   ```json
+   {
+     "status": "ok",
+     "ai_service_ok": true,
+     "api_key_masked": "****d084"
+   }
+   ```
+
+4. **Test full app** (visit `http://127.0.0.1:5000` in browser and upload a test file)
+
 ## 🔒 Security & Privacy
 
 - **No Data Storage**: Files are processed in memory and not stored permanently

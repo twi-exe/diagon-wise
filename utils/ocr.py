@@ -12,5 +12,8 @@ def extract_text_from_pdf(path):
 
 def extract_text_from_image(path):
     image = Image.open(path)
-    # Add timeout to prevent hanging on complex images
-    return pytesseract.image_to_string(image, timeout=15)
+    # Resize if too large to speed up OCR
+    max_size = (2000, 2000)
+    if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
+        image.thumbnail(max_size, Image.Resampling.LANCZOS)
+    return pytesseract.image_to_string(image, timeout=60)

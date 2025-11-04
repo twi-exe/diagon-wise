@@ -12,11 +12,5 @@ def extract_text_from_pdf(path):
 
 def extract_text_from_image(path):
     image = Image.open(path)
-    return pytesseract.image_to_string(image)
-    doc = fitz.open(path)
-    text = "\n".join([page.get_text() for page in doc])
-    return text
-
-def extract_text_from_image(path):
-    image = Image.open(path)
-    return pytesseract.image_to_string(image)
+    # Add timeout to prevent hanging on complex images
+    return pytesseract.image_to_string(image, timeout=15)
